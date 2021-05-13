@@ -10,6 +10,10 @@
 #import <QuartzCore/QuartzCore.h>
 #import <math.h>
 
+// 2021-05-13 Version 6.5.8 - Vet Smart - Rodrigo Gomes - Start
+// Inclusion of HMSegmentedControlSelectionStyleChip and everything related to the chip style
+// 2021-05-13 Version 6.5.8 - Vet Smart - Rodrigo Gomes - Finish
+
 NSUInteger HMSegmentedControlNoSegment = (NSUInteger)-1;
 
 @protocol HMAccessibilityDelegate <NSObject>
@@ -28,6 +32,9 @@ NSUInteger HMSegmentedControlNoSegment = (NSUInteger)-1;
 
 @property (nonatomic, strong) CALayer *selectionIndicatorStripLayer;
 @property (nonatomic, strong) CALayer *selectionIndicatorBoxLayer;
+// 2021-05-13 Version 6.5.8 - Vet Smart - Rodrigo Gomes - Start
+@property (nonatomic, strong) CALayer *selectionIndicatorChipLayer;
+// 2021-05-13 Version 6.5.8 - Vet Smart - Rodrigo Gomes - Finish
 @property (nonatomic, strong) CALayer *selectionIndicatorArrowLayer;
 @property (nonatomic, readwrite) CGFloat segmentWidth;
 @property (nonatomic, readwrite) NSArray<NSNumber *> *segmentWidthsArray;
@@ -117,17 +124,17 @@ NSUInteger HMSegmentedControlNoSegment = (NSUInteger)-1;
 }
 
 - (instancetype)initWithSectionImages:(NSArray<UIImage *> *)sectionImages sectionSelectedImages:(NSArray<UIImage *> *)sectionSelectedImages titlesForSections:(NSArray<NSString *> *)sectiontitles {
-	self = [super initWithFrame:CGRectZero];
+    self = [super initWithFrame:CGRectZero];
     if (self) {
         [self commonInit];
-		
-		if (sectionImages.count != sectiontitles.count) {
-			[NSException raise:NSRangeException format:@"***%s: Images bounds (%ld) Don't match Title bounds (%ld)", sel_getName(_cmd), (unsigned long)sectionImages.count, (unsigned long)sectiontitles.count];
+        
+        if (sectionImages.count != sectiontitles.count) {
+            [NSException raise:NSRangeException format:@"***%s: Images bounds (%ld) Don't match Title bounds (%ld)", sel_getName(_cmd), (unsigned long)sectionImages.count, (unsigned long)sectiontitles.count];
         }
-		
+        
         self.sectionImages = sectionImages;
         self.sectionSelectedImages = sectionSelectedImages;
-		self.sectionTitles = sectiontitles;
+        self.sectionTitles = sectiontitles;
         self.type = HMSegmentedControlTypeTextImages;
     }
     return self;
@@ -151,6 +158,10 @@ NSUInteger HMSegmentedControlNoSegment = (NSUInteger)-1;
     self.opaque = NO;
     _selectionIndicatorColor = [UIColor colorWithRed:52.0f/255.0f green:181.0f/255.0f blue:229.0f/255.0f alpha:1.0f];
     _selectionIndicatorBoxColor = _selectionIndicatorColor;
+    // 2021-05-13 Version 6.5.8 - Vet Smart - Rodrigo Gomes - Start
+    _selectionIndicatorChipColor = _selectionIndicatorColor;
+    _selectionIndicatorChipHeight = 28.0f;
+    // 2021-05-13 Version 6.5.8 - Vet Smart - Rodrigo Gomes - Finish
 
     self.selectedSegmentIndex = 0;
     self.segmentEdgeInset = UIEdgeInsetsMake(0, 5, 0, 5);
@@ -176,7 +187,13 @@ NSUInteger HMSegmentedControlNoSegment = (NSUInteger)-1;
     self.selectionIndicatorBoxLayer.opacity = self.selectionIndicatorBoxOpacity;
     self.selectionIndicatorBoxLayer.borderWidth = 1.0f;
     self.selectionIndicatorBoxOpacity = 0.2;
-    
+    // 2021-05-13 Version 6.5.8 - Vet Smart - Rodrigo Gomes - Start
+    self.selectionIndicatorChipLayer = [CALayer layer];
+    self.selectionIndicatorChipLayer.opacity = self.selectionIndicatorChipOpacity;
+    self.selectionIndicatorChipLayer.borderWidth = 1.0f;
+    self.selectionIndicatorChipOpacity = 0.2;
+    // 2021-05-13 Version 6.5.8 - Vet Smart - Rodrigo Gomes - Finish
+
     self.contentMode = UIViewContentModeRedraw;
 }
 
@@ -207,11 +224,11 @@ NSUInteger HMSegmentedControlNoSegment = (NSUInteger)-1;
 }
 
 - (void)setSelectionIndicatorLocation:(HMSegmentedControlSelectionIndicatorLocation)selectionIndicatorLocation {
-	_selectionIndicatorLocation = selectionIndicatorLocation;
-	
-	if (selectionIndicatorLocation == HMSegmentedControlSelectionIndicatorLocationNone) {
-		self.selectionIndicatorHeight = 0.0f;
-	}
+    _selectionIndicatorLocation = selectionIndicatorLocation;
+    
+    if (selectionIndicatorLocation == HMSegmentedControlSelectionIndicatorLocationNone) {
+        self.selectionIndicatorHeight = 0.0f;
+    }
 }
 
 - (void)setSelectionIndicatorBoxOpacity:(CGFloat)selectionIndicatorBoxOpacity {
@@ -219,6 +236,14 @@ NSUInteger HMSegmentedControlNoSegment = (NSUInteger)-1;
     
     self.selectionIndicatorBoxLayer.opacity = _selectionIndicatorBoxOpacity;
 }
+
+// 2021-05-13 Version 6.5.8 - Vet Smart - Rodrigo Gomes - Start
+- (void)setSelectionIndicatorChipOpacity:(CGFloat)selectionIndicatorChipOpacity {
+    _selectionIndicatorChipOpacity = selectionIndicatorChipOpacity;
+    
+    self.selectionIndicatorChipLayer.opacity = _selectionIndicatorChipOpacity;
+}
+// 2021-05-13 Version 6.5.8 - Vet Smart - Rodrigo Gomes - Finish
 
 - (void)setSegmentWidthStyle:(HMSegmentedControlSegmentWidthStyle)segmentWidthStyle {
     // Force HMSegmentedControlSegmentWidthStyleFixed when type is HMSegmentedControlTypeImages.
@@ -304,7 +329,12 @@ NSUInteger HMSegmentedControlNoSegment = (NSUInteger)-1;
     
     self.selectionIndicatorBoxLayer.backgroundColor = self.selectionIndicatorBoxColor.CGColor;
     self.selectionIndicatorBoxLayer.borderColor = self.selectionIndicatorBoxColor.CGColor;
-    
+
+    // 2021-05-13 Version 6.5.8 - Vet Smart - Rodrigo Gomes - Start
+    self.selectionIndicatorChipLayer.backgroundColor = self.selectionIndicatorChipColor.CGColor;
+    self.selectionIndicatorChipLayer.borderColor = self.selectionIndicatorChipColor.CGColor;
+    // 2021-05-13 Version 6.5.8 - Vet Smart - Rodrigo Gomes - Finish
+
     // Remove all sublayers to avoid drawing images over existing ones
     self.scrollView.layer.sublayers = nil;
     
@@ -327,9 +357,11 @@ NSUInteger HMSegmentedControlNoSegment = (NSUInteger)-1;
             
             // Text inside the CATextLayer will appear blurry unless the rect values are rounded
             BOOL locationUp = (self.selectionIndicatorLocation == HMSegmentedControlSelectionIndicatorLocationTop);
-            BOOL selectionStyleNotBox = (self.selectionStyle != HMSegmentedControlSelectionStyleBox);
+            // 2021-05-13 Version 6.5.8 - Vet Smart - Rodrigo Gomes - Start
+            BOOL selectionStyleNotBoxOrChip = (self.selectionStyle != HMSegmentedControlSelectionStyleBox || self.selectionStyle != HMSegmentedControlSelectionStyleChip);
 
-            CGFloat y = roundf((CGRectGetHeight(self.frame) - selectionStyleNotBox * self.selectionIndicatorHeight) / 2 - stringHeight / 2 + self.selectionIndicatorHeight * locationUp);
+            CGFloat y = roundf((CGRectGetHeight(self.frame) - selectionStyleNotBoxOrChip * self.selectionIndicatorHeight) / 2 - stringHeight / 2 + self.selectionIndicatorHeight * locationUp);
+            // 2021-05-13 Version 6.5.8 - Vet Smart - Rodrigo Gomes - Finish
             CGRect rect;
             if (self.segmentWidthStyle == HMSegmentedControlSegmentWidthStyleFixed) {
                 rect = CGRectMake((self.segmentWidth * idx) + (self.segmentWidth - stringWidth) / 2, y, stringWidth, stringHeight);
@@ -465,11 +497,11 @@ NSUInteger HMSegmentedControlNoSegment = (NSUInteger)-1;
         }];
     } else if (self.type == HMSegmentedControlTypeTextImages){
         [self removeTitleBackgroundLayers];
-		[self.sectionImages enumerateObjectsUsingBlock:^(id iconImage, NSUInteger idx, BOOL *stop) {
+        [self.sectionImages enumerateObjectsUsingBlock:^(id iconImage, NSUInteger idx, BOOL *stop) {
             UIImage *icon = iconImage;
             CGFloat imageWidth = icon.size.width;
             CGFloat imageHeight = icon.size.height;
-			
+            
             CGSize stringSize = [self measureTitleAtIndex:idx];
             CGFloat stringHeight = stringSize.height;
             CGFloat stringWidth = stringSize.width;
@@ -554,7 +586,7 @@ NSUInteger HMSegmentedControlNoSegment = (NSUInteger)-1;
             }
             CALayer *imageLayer = [CALayer layer];
             imageLayer.frame = imageRect;
-			
+            
             if (self.selectedSegmentIndex == idx) {
                 if (self.sectionSelectedImages) {
                     UIImage *highlightIcon = [self.sectionSelectedImages objectAtIndex:idx];
@@ -567,7 +599,7 @@ NSUInteger HMSegmentedControlNoSegment = (NSUInteger)-1;
             }
             
             [self.scrollView.layer addSublayer:imageLayer];
-			titleLayer.contentsScale = [[UIScreen mainScreen] scale];
+            titleLayer.contentsScale = [[UIScreen mainScreen] scale];
             [self.scrollView.layer addSublayer:titleLayer];
             
             if ([self.accessibilityElements count]<=idx) {
@@ -594,10 +626,10 @@ NSUInteger HMSegmentedControlNoSegment = (NSUInteger)-1;
                 else
                     element.accessibilityTraits = UIAccessibilityTraitButton;
             }
-			
+            
             [self addBackgroundAndBorderLayerWithRect:imageRect];
         }];
-	}
+    }
     
     // Add the selection indicators
     if (self.selectedSegmentIndex != HMSegmentedControlNoSegment) {
@@ -614,6 +646,13 @@ NSUInteger HMSegmentedControlNoSegment = (NSUInteger)-1;
                 if (self.selectionStyle == HMSegmentedControlSelectionStyleBox && !self.selectionIndicatorBoxLayer.superlayer) {
                     self.selectionIndicatorBoxLayer.frame = [self frameForFillerSelectionIndicator];
                     [self.scrollView.layer insertSublayer:self.selectionIndicatorBoxLayer atIndex:0];
+                
+                // 2021-05-13 Version 6.5.8 - Vet Smart - Rodrigo Gomes - Start
+                } else if (self.selectionStyle == HMSegmentedControlSelectionStyleChip && !self.selectionIndicatorChipLayer.superlayer) {
+                    self.selectionIndicatorChipLayer.frame = [self frameForFillerSelectionIndicator];
+                    self.selectionIndicatorChipLayer.cornerRadius = self.selectionIndicatorChipLayer.frame.size.height / 2.0f;
+                    [self.scrollView.layer insertSublayer:self.selectionIndicatorChipLayer atIndex:0];
+                // 2021-05-13 Version 6.5.8 - Vet Smart - Rodrigo Gomes - Finish
                 }
             }
         }
@@ -631,6 +670,21 @@ NSUInteger HMSegmentedControlNoSegment = (NSUInteger)-1;
     backgroundLayer.frame = fullRect;
     [self.layer insertSublayer:backgroundLayer atIndex:0];
     [self.titleBackgroundLayers addObject:backgroundLayer];
+    
+    // 2021-05-13 Version 6.5.8 - Vet Smart - Rodrigo Gomes - Start
+    if (self.selectionStyle == HMSegmentedControlSelectionStyleChip) {
+        CGRect borderFrame = [self frameForChip:fullRect];
+
+        CALayer *borderLayer = [CALayer layer];
+        borderLayer.frame = borderFrame;
+        borderLayer.borderColor = self.borderColor.CGColor;
+        borderLayer.borderWidth = self.borderWidth;
+        borderLayer.cornerRadius = borderFrame.size.height / 2.0f;
+        [self.scrollView.layer insertSublayer:borderLayer atIndex:0];
+        
+        return;
+    }
+    // 2021-05-13 Version 6.5.8 - Vet Smart - Rodrigo Gomes - Finish
     
     // Border layer
     if (self.borderType & HMSegmentedControlBorderTypeTop) {
@@ -714,11 +768,11 @@ NSUInteger HMSegmentedControlNoSegment = (NSUInteger)-1;
         CGFloat imageWidth = sectionImage.size.width;
         sectionWidth = imageWidth;
     } else if (self.type == HMSegmentedControlTypeTextImages) {
-		CGFloat stringWidth = [self measureTitleAtIndex:self.selectedSegmentIndex].width;
-		UIImage *sectionImage = [self.sectionImages objectAtIndex:self.selectedSegmentIndex];
-		CGFloat imageWidth = sectionImage.size.width;
+        CGFloat stringWidth = [self measureTitleAtIndex:self.selectedSegmentIndex].width;
+        UIImage *sectionImage = [self.sectionImages objectAtIndex:self.selectedSegmentIndex];
+        CGFloat imageWidth = sectionImage.size.width;
         sectionWidth = MAX(stringWidth, imageWidth);
-	}
+    }
     
     if (self.selectionStyle == HMSegmentedControlSelectionStyleArrow) {
         CGFloat widthToEndOfSelectedSegment = (self.segmentWidth * self.selectedSegmentIndex) + self.segmentWidth;
@@ -758,7 +812,30 @@ NSUInteger HMSegmentedControlNoSegment = (NSUInteger)-1;
     }
 }
 
+// 2021-05-13 Version 6.5.8 - Vet Smart - Rodrigo Gomes - Start
+- (CGRect)frameForChip:(CGRect)segmentRect {
+    CGRect frame = segmentRect;
+    
+    if (self.selectionStyle == HMSegmentedControlSelectionStyleChip) {
+        // Remove points from each side of the calculated frame
+        CGFloat removeWidth = 6.0f;
+        if (frame.size.width > (removeWidth * 2.0f)) {
+            frame = CGRectMake(frame.origin.x + removeWidth, frame.origin.y, frame.size.width - (removeWidth * 2.0f), frame.size.height);
+        }
+        if (frame.size.height > self.selectionIndicatorChipHeight) {
+            frame = CGRectMake(frame.origin.x, frame.origin.y + ((frame.size.height - self.selectionIndicatorChipHeight) / 2.0f), frame.size.width, self.selectionIndicatorChipHeight);
+        }
+    }
+    
+    return frame;
+}
+// 2021-05-13 Version 6.5.8 - Vet Smart - Rodrigo Gomes - Finish
+
 - (CGRect)frameForFillerSelectionIndicator {
+    // 2021-05-13 Version 6.5.8 - Vet Smart - Rodrigo Gomes - Start
+    CGRect frame = CGRectZero;
+    // 2021-05-13 Version 6.5.8 - Vet Smart - Rodrigo Gomes - Finish
+    
     if (self.segmentWidthStyle == HMSegmentedControlSegmentWidthStyleDynamic) {
         CGFloat selectedSegmentOffset = 0.0f;
         
@@ -771,10 +848,19 @@ NSUInteger HMSegmentedControlNoSegment = (NSUInteger)-1;
             
             i++;
         }
-        
-        return CGRectMake(selectedSegmentOffset, 0, [[self.segmentWidthsArray objectAtIndex:self.selectedSegmentIndex] floatValue], CGRectGetHeight(self.frame));
+
+        // 2021-05-13 Version 6.5.8 - Vet Smart - Rodrigo Gomes - Start
+        //return CGRectMake(selectedSegmentOffset, 0, [[self.segmentWidthsArray objectAtIndex:self.selectedSegmentIndex] floatValue], CGRectGetHeight(self.frame));
+    //}
+    //return CGRectMake(self.segmentWidth * self.selectedSegmentIndex, 0, self.segmentWidth, CGRectGetHeight(self.frame));
+
+        frame = CGRectMake(selectedSegmentOffset, 0, [[self.segmentWidthsArray objectAtIndex:self.selectedSegmentIndex] floatValue], CGRectGetHeight(self.frame));
+    } else {
+        frame = CGRectMake(self.segmentWidth * self.selectedSegmentIndex, 0, self.segmentWidth, CGRectGetHeight(self.frame));
     }
-    return CGRectMake(self.segmentWidth * self.selectedSegmentIndex, 0, self.segmentWidth, CGRectGetHeight(self.frame));
+    
+    return [self frameForChip:frame];
+    // 2021-05-13 Version 6.5.8 - Vet Smart - Rodrigo Gomes - Finish
 }
 
 - (void)updateSegmentsRects {
@@ -994,6 +1080,9 @@ NSUInteger HMSegmentedControlNoSegment = (NSUInteger)-1;
         [self.selectionIndicatorArrowLayer removeFromSuperlayer];
         [self.selectionIndicatorStripLayer removeFromSuperlayer];
         [self.selectionIndicatorBoxLayer removeFromSuperlayer];
+        // 2021-05-13 Version 6.5.8 - Vet Smart - Rodrigo Gomes - Start
+        [self.selectionIndicatorChipLayer removeFromSuperlayer];
+        // 2021-05-13 Version 6.5.8 - Vet Smart - Rodrigo Gomes - Finish
     } else {
         [self scrollToSelectedSegmentIndex:animated];
         
@@ -1012,8 +1101,13 @@ NSUInteger HMSegmentedControlNoSegment = (NSUInteger)-1;
                 if ([self.selectionIndicatorStripLayer superlayer] == nil) {
                     [self.scrollView.layer addSublayer:self.selectionIndicatorStripLayer];
                     
-                    if (self.selectionStyle == HMSegmentedControlSelectionStyleBox && [self.selectionIndicatorBoxLayer superlayer] == nil)
+                    // 2021-05-13 Version 6.5.8 - Vet Smart - Rodrigo Gomes - Start
+                    if (self.selectionStyle == HMSegmentedControlSelectionStyleBox && [self.selectionIndicatorBoxLayer superlayer] == nil) {
                         [self.scrollView.layer insertSublayer:self.selectionIndicatorBoxLayer atIndex:0];
+                    } else if (self.selectionStyle == HMSegmentedControlSelectionStyleChip && [self.selectionIndicatorChipLayer superlayer] == nil) {
+                        [self.scrollView.layer insertSublayer:self.selectionIndicatorChipLayer atIndex:0];
+                    }
+                    // 2021-05-13 Version 6.5.8 - Vet Smart - Rodrigo Gomes - Finish
                     
                     [self setSelectedSegmentIndex:index animated:NO notify:YES];
                     return;
@@ -1027,15 +1121,24 @@ NSUInteger HMSegmentedControlNoSegment = (NSUInteger)-1;
             self.selectionIndicatorArrowLayer.actions = nil;
             self.selectionIndicatorStripLayer.actions = nil;
             self.selectionIndicatorBoxLayer.actions = nil;
-            
+            // 2021-05-13 Version 6.5.8 - Vet Smart - Rodrigo Gomes - Start
+            self.selectionIndicatorChipLayer.actions = nil;
+            // 2021-05-13 Version 6.5.8 - Vet Smart - Rodrigo Gomes - Finish
+
             // Animate to new position
             [CATransaction begin];
             [CATransaction setAnimationDuration:0.15f];
             [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear]];
             [self setArrowFrame];
             self.selectionIndicatorBoxLayer.frame = [self frameForSelectionIndicator];
+            // 2021-05-13 Version 6.5.8 - Vet Smart - Rodrigo Gomes - Start
+            self.selectionIndicatorChipLayer.frame = [self frameForSelectionIndicator];
+            // 2021-05-13 Version 6.5.8 - Vet Smart - Rodrigo Gomes - Finish
             self.selectionIndicatorStripLayer.frame = [self frameForSelectionIndicator];
             self.selectionIndicatorBoxLayer.frame = [self frameForFillerSelectionIndicator];
+            // 2021-05-13 Version 6.5.8 - Vet Smart - Rodrigo Gomes - Start
+            self.selectionIndicatorChipLayer.frame = [self frameForFillerSelectionIndicator];
+            // 2021-05-13 Version 6.5.8 - Vet Smart - Rodrigo Gomes - Finish
             [CATransaction commit];
         } else {
             // Disable CALayer animations
@@ -1048,7 +1151,12 @@ NSUInteger HMSegmentedControlNoSegment = (NSUInteger)-1;
             
             self.selectionIndicatorBoxLayer.actions = newActions;
             self.selectionIndicatorBoxLayer.frame = [self frameForFillerSelectionIndicator];
-            
+
+            // 2021-05-13 Version 6.5.8 - Vet Smart - Rodrigo Gomes - Start
+            self.selectionIndicatorChipLayer.actions = newActions;
+            self.selectionIndicatorChipLayer.frame = [self frameForFillerSelectionIndicator];
+            // 2021-05-13 Version 6.5.8 - Vet Smart - Rodrigo Gomes - Finish
+
             if (notify)
                 [self notifyForSegmentChangeToIndex:index];
         }

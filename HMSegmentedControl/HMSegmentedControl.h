@@ -10,24 +10,31 @@
 
 @class HMSegmentedControl;
 
+// 2021-05-13 Version 6.5.8 - Vet Smart - Rodrigo Gomes - Start
+// Inclusion of HMSegmentedControlSelectionStyleChip and everything related to the chip style
+// 2021-05-13 Version 6.5.8 - Vet Smart - Rodrigo Gomes - Finish
+
 NS_ASSUME_NONNULL_BEGIN
 
 typedef void (^IndexChangeBlock)(NSUInteger index);
 typedef NSAttributedString *_Nonnull(^HMTitleFormatterBlock)(HMSegmentedControl *segmentedControl, NSString *title, NSUInteger index, BOOL selected);
 
+// 2021-05-13 Version 6.5.8 - Vet Smart - Rodrigo Gomes - Start
 typedef NS_ENUM(NSInteger, HMSegmentedControlSelectionStyle) {
     HMSegmentedControlSelectionStyleTextWidthStripe, // Indicator width will only be as big as the text width
     HMSegmentedControlSelectionStyleFullWidthStripe, // Indicator width will fill the whole segment
     HMSegmentedControlSelectionStyleBox, // A rectangle that covers the whole segment
+    HMSegmentedControlSelectionStyleChip, // A rounded rectangle that covers the text of the segment
     HMSegmentedControlSelectionStyleArrow // An arrow in the middle of the segment pointing up or down depending on `HMSegmentedControlSelectionIndicatorLocation`
 };
+// 2021-05-13 Version 6.5.8 - Vet Smart - Rodrigo Gomes - Finish
 
 typedef NS_ENUM(NSInteger, HMSegmentedControlSelectionIndicatorLocation) {
     HMSegmentedControlSelectionIndicatorLocationTop,
     HMSegmentedControlSelectionIndicatorLocationBottom,
     HMSegmentedControlSelectionIndicatorLocationUp __deprecated_enum_msg("Use HMSegmentedControlSelectionIndicatorLocationTop.") = HMSegmentedControlSelectionIndicatorLocationTop,
     HMSegmentedControlSelectionIndicatorLocationDown __deprecated_enum_msg("Use HMSegmentedControlSelectionIndicatorLocationBottom.") = HMSegmentedControlSelectionIndicatorLocationBottom,
-	HMSegmentedControlSelectionIndicatorLocationNone // No selection indicator
+    HMSegmentedControlSelectionIndicatorLocationNone // No selection indicator
 };
 
 typedef NS_ENUM(NSInteger, HMSegmentedControlSegmentWidthStyle) {
@@ -49,7 +56,7 @@ FOUNDATION_EXPORT NSUInteger HMSegmentedControlNoSegment;
 typedef NS_ENUM(NSInteger, HMSegmentedControlType) {
     HMSegmentedControlTypeText,
     HMSegmentedControlTypeImages,
-	HMSegmentedControlTypeTextImages
+    HMSegmentedControlTypeTextImages
 };
 
 typedef NS_ENUM(NSInteger, HMSegmentedControlImagePosition) {
@@ -113,6 +120,15 @@ typedef NS_ENUM(NSInteger, HMSegmentedControlImagePosition) {
  */
 @property (nonatomic, strong) UIColor *selectionIndicatorBoxColor UI_APPEARANCE_SELECTOR;
 
+// 2021-05-13 Version 6.5.8 - Vet Smart - Rodrigo Gomes - Start
+/**
+ Color for the selection indicator chip
+ 
+ Default is selectionIndicatorColor
+ */
+@property (nonatomic, strong) UIColor *selectionIndicatorChipColor UI_APPEARANCE_SELECTOR;
+// 2021-05-13 Version 6.5.8 - Vet Smart - Rodrigo Gomes - Finish
+
 /**
  Color for the vertical divider between segments.
  
@@ -126,6 +142,22 @@ typedef NS_ENUM(NSInteger, HMSegmentedControlImagePosition) {
  Default is `0.2f`
  */
 @property (nonatomic) CGFloat selectionIndicatorBoxOpacity;
+
+// 2021-05-13 Version 6.5.8 - Vet Smart - Rodrigo Gomes - Start
+/**
+ Opacity for the selection indicator chip.
+ 
+ Default is `0.2f`
+ */
+@property (nonatomic) CGFloat selectionIndicatorChipOpacity;
+
+/**
+ Height for the selection indicator chip.
+ 
+ Default is `28.0f`
+ */
+@property (nonatomic) CGFloat selectionIndicatorChipHeight;
+// 2021-05-13 Version 6.5.8 - Vet Smart - Rodrigo Gomes - Finish
 
 /**
  Width the vertical divider between segments that is added when `verticalDividerEnabled` is set to YES.
@@ -228,7 +260,7 @@ typedef NS_ENUM(NSInteger, HMSegmentedControlImagePosition) {
 
 /**
  Edge insets for the selection indicator.
- NOTE: This does not affect the bounding box of HMSegmentedControlSelectionStyleBox
+ NOTE: This does not affect the bounding box of HMSegmentedControlSelectionStyleBox or HMSegmentedControlSelectionStyleChip
  
  When HMSegmentedControlSelectionIndicatorLocationUp is selected, bottom edge insets are not used
  
