@@ -280,6 +280,16 @@ typedef NS_ENUM(NSInteger, HMSegmentedControlImagePosition) {
  */
 @property (nonatomic, readwrite) UIEdgeInsets segmentEdgeInset;
 
+// 2021-05-13 Version 6.5.8 - Vet Smart - Rodrigo Gomes - Finish
+/**
+ Inset for the scrollView
+ 
+ Default is UIEdgeInsetsMake(0, 0, 0, 0)
+ */
+@property (nonatomic, readwrite) UIEdgeInsets contentInset;
+// This is not working as intended, but it'll do for now
+// 2021-05-13 Version 6.5.8 - Vet Smart - Rodrigo Gomes - Finish
+
 @property (nonatomic, readwrite) UIEdgeInsets enlargeEdgeInset;
 
 /**

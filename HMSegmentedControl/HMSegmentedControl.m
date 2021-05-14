@@ -161,6 +161,7 @@ NSUInteger HMSegmentedControlNoSegment = (NSUInteger)-1;
     // 2021-05-13 Version 6.5.8 - Vet Smart - Rodrigo Gomes - Start
     _selectionIndicatorChipColor = _selectionIndicatorColor;
     _selectionIndicatorChipHeight = 28.0f;
+    self.contentInset = UIEdgeInsetsMake(0.0f, 0.0f, 0.0f, 0.0f);
     // 2021-05-13 Version 6.5.8 - Vet Smart - Rodrigo Gomes - Finish
 
     self.selectedSegmentIndex = 0;
@@ -882,7 +883,12 @@ NSUInteger HMSegmentedControlNoSegment = (NSUInteger)-1;
 
 - (void)updateSegmentsRects {
     self.scrollView.contentInset = UIEdgeInsetsZero;
-    self.scrollView.frame = CGRectMake(0, 0, CGRectGetWidth(self.frame), CGRectGetHeight(self.frame));
+    
+    // 2021-05-13 Version 6.5.8 - Vet Smart - Rodrigo Gomes - Start
+    self.scrollView.frame = CGRectMake(self.contentInset.left, 0, CGRectGetWidth(self.frame) - self.contentInset.left - self.contentInset.right, CGRectGetHeight(self.frame));
+    self.clipsToBounds = false;
+    self.scrollView.clipsToBounds = false;
+    // 2021-05-13 Version 6.5.8 - Vet Smart - Rodrigo Gomes - Finish
     
     if ([self sectionCount] > 0) {
         self.segmentWidth = self.frame.size.width / [self sectionCount];
