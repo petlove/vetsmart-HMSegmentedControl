@@ -813,14 +813,31 @@ NSUInteger HMSegmentedControlNoSegment = (NSUInteger)-1;
 }
 
 // 2021-05-13 Version 6.5.8 - Vet Smart - Rodrigo Gomes - Start
+- (NSUInteger)currentIndexForSegmentRect:(CGRect)segmentRect {
+    NSUInteger currentIndexForSegmentRect = 0;
+    CGFloat selectedSegmentOffset = 0.0f;
+    for (NSNumber *width in self.segmentWidthsArray) {
+        if (segmentRect.origin.x == selectedSegmentOffset) {
+            break;
+        }
+        selectedSegmentOffset = selectedSegmentOffset + [width floatValue];
+        currentIndexForSegmentRect++;
+    }
+    return currentIndexForSegmentRect;
+}
+
 - (CGRect)frameForChip:(CGRect)segmentRect {
     CGRect frame = segmentRect;
     
     if (self.selectionStyle == HMSegmentedControlSelectionStyleChip) {
-        // Remove points from each side of the calculated frame
-        CGFloat removeWidth = 6.0f;
-        if (frame.size.width > (removeWidth * 2.0f)) {
-            frame = CGRectMake(frame.origin.x + removeWidth, frame.origin.y, frame.size.width - (removeWidth * 2.0f), frame.size.height);
+        NSUInteger currentIndexForSegmentRect = [self currentIndexForSegmentRect:segmentRect];
+        CGSize stringSize = [self measureTitleAtIndex:currentIndexForSegmentRect];
+
+        CGFloat extraSidePadding = 20.0f;
+        if (frame.size.width > (stringSize.width + extraSidePadding)) {
+            CGFloat newWidth = stringSize.width + extraSidePadding;
+            CGFloat newX = frame.origin.x + ((frame.size.width - newWidth) /2.0f);
+            frame = CGRectMake(newX, frame.origin.y, newWidth, frame.size.height);
         }
         if (frame.size.height > self.selectionIndicatorChipHeight) {
             frame = CGRectMake(frame.origin.x, frame.origin.y + ((frame.size.height - self.selectionIndicatorChipHeight) / 2.0f), frame.size.width, self.selectionIndicatorChipHeight);
