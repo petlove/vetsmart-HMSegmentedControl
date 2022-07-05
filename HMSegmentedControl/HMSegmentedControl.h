@@ -288,7 +288,6 @@ typedef NS_ENUM(NSInteger, HMSegmentedControlImagePosition) {
  */
 @property (nonatomic, readwrite) UIEdgeInsets contentInset;
 // This is not working as intended, but it'll do for now
-// Teste de Commit
 // 2021-05-13 Version 6.5.8 - Vet Smart - Rodrigo Gomes - Finish
 
 @property (nonatomic, readwrite) UIEdgeInsets enlargeEdgeInset;
